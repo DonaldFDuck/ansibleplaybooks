@@ -47,7 +47,7 @@
 # test_command: uptime – Execute uptime command on the rebooted server and expect success from to determine the machine is ready for further tasks.
 
    - name: Reboot the Debian or Ubuntu server
-      reboot: 
+      reboot:
         msg: "Reboot initiated by Ansible due to kernel updates"
         connect_timeout: 5
         reboot_timeout: 300
