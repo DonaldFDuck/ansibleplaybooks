@@ -13,8 +13,8 @@
    - name: get a list of downloaded patch files.
      find:
        file_type: file
-       paths: '/temp2/'
-       patterns: '*.rpm'
+       paths: '.'
+       patterns: '*.*'
      register: find_results
 
    - name: print find_results
