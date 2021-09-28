@@ -14,7 +14,7 @@
      find:
        file_type: file
        paths: '.'
-       patterns: '*.*'
+       patterns: '*.py'
      register: find_results
 
    - name: print find_results
