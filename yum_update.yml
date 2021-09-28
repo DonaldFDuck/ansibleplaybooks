@@ -1,0 +1,30 @@
+---
+ - hosts: 192.168.2.2
+
+   gather_facts: no
+
+   strategy: free
+   become_user: root
+   become: yes
+   become_method: sudo
+
+
+   tasks:
+   - name: get a list of downloaded patch files.
+     find:
+       file_type: file
+       paths: '/temp2/'
+       patterns: '*.rpm'
+     register: find_results
+
+   - name: print find_results
+     #debug: var=item
+     debug: var=item.path
+     with_items: '{{find_results.files}}'
+     #with_items: '{{find_results}}'
+
+   - name: install those patches
+     yum:
+       name: '{{find_results}}'
+       state: present
+     with_items: '{{find_results.files}}'
