@@ -1,27 +1,24 @@
 ---
- - hosts: 192.168.2.2
+- hosts: 192.168.2.2
+  gather_facts: no
+  strategy: free
+  become_user: root
+  become: yes
+  become_method: sudo
 
-   gather_facts: no
+  tasks:
+  - name: get a list of downloaded patch files.
+    find:
+      file_type: file
+      paths: '.'
+      patterns: '*.py'
+    register: find_results
 
-   strategy: free
-   become_user: root
-   become: yes
-   become_method: sudo
-
-
-   tasks:
-   - name: get a list of downloaded patch files.
-     find:
-       file_type: file
-       paths: '.'
-       patterns: '*.py'
-     register: find_results
-
-   - name: print find_results
-     #debug: var=item
-     debug: var=item.path
-     with_items: '{{find_results.files}}'
-     #with_items: '{{find_results}}'
+  - name: print find_results
+    #debug: var=item
+    debug: var=item.path
+    with_items: '{{find_results.files}}'
+    #with_items: '{{find_results}}'
 
 #   - name: install those patches
 #     yum:
@@ -30,14 +27,14 @@
 #     with_items: '{{find_results.files}}'
 
 # To update repositories cache using Ansible:
-   - name: Update apt-get repo and cache
-     apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+  - name: Update apt-get repo and cache
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
 
 # Upgrading all apt packages using Ansible
 # upgrade=dist – Run the equivalent of ‘apt-get upgrade’ command on all servers
 # force_apt_get=yes – Use apt-get instead of aptitude
-   - name: Upgrade all apt packages
-     apt: upgrade=dist force_apt_get=yes
+  - name: Upgrade all apt packages
+    apt: upgrade=dist force_apt_get=yes
 
 # Where,
 
@@ -46,12 +43,12 @@
 # get_md5=no – Algorithm to determine checksum of file. In this example, I am using md5, but you can use sha1, sha224, sha256, sha384, and sha512.
 # test_command: uptime – Execute uptime command on the rebooted server and expect success from to determine the machine is ready for further tasks.
 
-   - name: Reboot the Debian or Ubuntu server
-      reboot:
-        msg: "Reboot initiated by Ansible due to kernel updates"
-        connect_timeout: 5
-        reboot_timeout: 300
-        pre_reboot_delay: 0
-        post_reboot_delay: 30
-        test_command: uptime
-      when: reboot_required_file.stat.exists
+  - name: Reboot the Debian or Ubuntu server
+    reboot:
+      msg: "Reboot initiated by Ansible due to kernel updates"
+      connect_timeout: 5
+      reboot_timeout: 300
+      pre_reboot_delay: 0
+      post_reboot_delay: 30
+      test_command: uptime
+    when: reboot_required_file.stat.exists
