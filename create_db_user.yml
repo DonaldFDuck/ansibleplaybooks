@@ -1,0 +1,47 @@
+- name: Create New db User
+  hosts: all
+  vars:
+    dbname: "orclcdb"
+    gen_username: "sys"
+    gen_password1: "oracle"
+    dbuserid: "testuser"
+    dbuserpasswd: "testuser"
+  become: true
+  become_user: oracle
+  gather_facts: false
+  tasks:
+#        CREATE USER intro_user IDENTIFIED BY mypassword;
+#        GRANT CONNECT TO intro_user;
+#        GRANT SESSION, GRANT ANY PRIVILEGE TO intro_user;
+#        GRANT UNLIMITED TABLESPACE TO intro_user;
+#        GRANT CREATE TABLE TO intro_user;
+#  - become: true
+#        ALTER SESSION SET CONTAINER = ORCLPDB1;
+#        create user testuser identified by testuser;
+#        grant connect, resource, dba to testuser;
+#        grant create session to testuser;
+#       $ORACLE_HOME/bin/sqlplus / as sysdba << EOF
+  - name: run a script to connect to sqlplus and create user account
+    shell: |
+        database={{dbname}}
+        ansibleuser={{gen_username}}
+        ansiblepwd={{gen_password1}}
+        userid={{dbuserid}}
+        userpwd={{dbuserpasswd}}
+        sqlplus / as sysdba << EOF
+        ALTER SESSION SET CONTAINER = ORCLPDB1;
+        create user testuser identified by testuser;
+        grant connect, resource, dba to testuser;
+        grant create session to testuser;
+        SHOW user;
+        quit
+        EOF
+    register: query_output
+#    environment:
+#      ORACLE_HOME: /u01/app/oracle/product/19c/dbhome_1/
+  - name: Show response
+    set_fact:
+      simple_output: "{{ query_output.stdout }}"
+  - name: Show result
+    debug:
+      var: simple_output
